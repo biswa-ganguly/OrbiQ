@@ -1,0 +1,87 @@
+"use client"
+import React from 'react'
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+  } from "@/components/ui/sidebar"
+import Image from 'next/image'
+import { Compass, History, LogIn, Search } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+
+function AppSidebar() {
+
+    const Menu=[
+        {
+            title: "Home",
+            icon:Search,
+            path: "/"
+        },
+        {
+            title: "Discover",
+            icon:Compass,
+            path: "/discover"
+        },
+        {
+            title: "Library",
+            icon:History,
+            path: "/library"
+        },
+        {
+            title: "Sign In",
+            icon:LogIn,
+            path: "#"
+        },
+    ]
+
+    const path = usePathname()
+  return (
+    <Sidebar>
+      <SidebarHeader className="bg-yellow-200 items-center " >
+        <Image src={"/logo.png"} alt='logo' width={200} height={100} />
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup >
+        <SidebarContent>
+            <SidebarMenu>
+                {Menu.map((menu,index)=>(
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild className={` p-6   ${path?.includes(menu.path) && "font-bold"}`}>
+                            <a href={menu.path}>
+                                <menu.icon className='h-8 w-8'/>
+                                <span className=' text-lg ' >{menu.title}</span>
+                            </a>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                ))}
+            </SidebarMenu>
+            <Button className={" rounded-4xl m-4 py-6 "}>
+                <h1 className='text-lg'>
+                    Sign Up
+                </h1>
+            </Button>
+        </SidebarContent>
+        </SidebarGroup >
+      </SidebarContent>
+      <SidebarFooter className="p-4 border-t border-border">
+        <div className="flex flex-col space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">© 2025 GANGULY</span>
+            <span className="text-xs font-medium text-primary"></span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Built with passion 
+          </p>
+        </div>
+      </SidebarFooter>
+    </Sidebar>
+  )
+}
+
+export default AppSidebar
