@@ -14,6 +14,7 @@ import Image from 'next/image'
 import { Compass, History, LogIn, Search } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { SignUpButton, UserButton } from '@clerk/nextjs'
 
 function AppSidebar() {
 
@@ -36,7 +37,7 @@ function AppSidebar() {
         {
             title: "Sign In",
             icon:LogIn,
-            path: "#"
+            path: "/sign-in"
         },
     ]
 
@@ -61,15 +62,20 @@ function AppSidebar() {
                     </SidebarMenuItem>
                 ))}
             </SidebarMenu>
+            <SignUpButton mode='modal'>
             <Button className={" rounded-4xl m-4 py-6 "}>
                 <h1 className='text-lg'>
                     Sign Up
                 </h1>
             </Button>
+            </SignUpButton>
         </SidebarContent>
         </SidebarGroup >
       </SidebarContent>
       <SidebarFooter className="p-4 border-t border-border">
+      <div className='my-3'>
+          <UserButton/>
+        </div>
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">© 2025 GANGULY</span>
@@ -79,6 +85,7 @@ function AppSidebar() {
             Built with passion 
           </p>
         </div>
+        
       </SidebarFooter>
     </Sidebar>
   )
