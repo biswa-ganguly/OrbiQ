@@ -14,7 +14,7 @@ import Image from 'next/image'
 import { Compass, History, LogIn, Search } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { SignUpButton, UserButton } from '@clerk/nextjs'
+import { SignOutButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'
 
 function AppSidebar() {
 
@@ -34,14 +34,15 @@ function AppSidebar() {
             icon:History,
             path: "/library"
         },
-        {
-            title: "Sign In",
-            icon:LogIn,
-            path: "/sign-in"
-        },
+        // {
+        //     title: "Sign In",
+        //     icon:LogIn,
+        //     path: "/sign-in"
+        // },
     ]
 
     const path = usePathname()
+    const {user} = useUser()
   return (
     <Sidebar>
       <SidebarHeader className="bg-yellow-200 items-center " >
@@ -62,19 +63,25 @@ function AppSidebar() {
                     </SidebarMenuItem>
                 ))}
             </SidebarMenu>
-            <SignUpButton mode='modal'>
+            { !user? <SignUpButton mode='modal'>
             <Button className={" rounded-4xl m-4 py-6 "}>
                 <h1 className='text-lg'>
                     Sign Up
                 </h1>
             </Button>
-            </SignUpButton>
+            </SignUpButton>: <SignOutButton>
+            <Button className={" rounded-4xl m-4 py-6 "}>
+                <h1 className='text-lg'>
+                    Log Out
+                </h1>
+            </Button>
+            </SignOutButton> }
         </SidebarContent>
         </SidebarGroup >
       </SidebarContent>
       <SidebarFooter className="p-4 border-t border-border">
-      <div className='my-3'>
-          <UserButton/>
+      <div className='my-3 items-center font-semibold font-mono flex gap-4'>
+          Welcome Back <UserButton/>
         </div>
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-between">
