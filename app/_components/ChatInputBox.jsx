@@ -16,6 +16,7 @@ import { AIModelsOption } from '@/services/Shared'
 import { useUser } from '@clerk/nextjs'
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '@/services/Superbase'
+import { useRouter } from 'next/navigation'
   
 
 
@@ -25,6 +26,7 @@ import { supabase } from '@/services/Superbase'
     const [searchType, setSearchType]= useState("search")
     const {user} = useUser();
     const [loading,setLoading]= useState(false)
+    const router = useRouter()
 
 
 
@@ -44,6 +46,8 @@ setLoading(true)
       },
     ])
     .select(); 
+
+    router.push("/search/"+libId)
 
 
     console.log("Inserted data:", data);
