@@ -1,7 +1,8 @@
+"use client"
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AudioLines, Command, Cpu, Globe, icons, Mic, Paperclip, Pin, Search, SearchCheck } from 'lucide-react'
+import { ArrowRight, AudioLines, Command, Cpu, Globe, icons, Mic, Paperclip, Pin, Search, SearchCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -12,10 +13,45 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import { AIModelsOption } from '@/services/Shared'
+import { useUser } from '@clerk/nextjs'
+import { v4 as uuidv4 } from 'uuid';
+import { supabase } from '@/services/Superbase'
   
 
 
   function ChatInputBox() {
+
+    const [userSearchInput, setUserSearchInput]= useState()
+    const [searchType, setSearchType]= useState("search")
+    const {user} = useUser();
+    const [loading,setLoading]= useState(false)
+
+
+
+const onSearchQuery = async () => {
+setLoading(true)
+
+  const libId = uuidv4();
+
+  const { data, error } = await supabase
+    .from('library')
+    .insert([
+      {
+        searchInput: userSearchInput,
+        userEmail: user.primaryEmailAddress.emailAddress,
+        type: searchType,
+        libId: libId,
+      },
+    ])
+    .select(); 
+
+
+    console.log("Inserted data:", data);
+setLoading(false)
+};
+
+
+
     return (
       <div className='flex flex-col items-center justify-center h-screen'>
         <Image src={"/logo.png"} width={280} height={120} alt='logo2' />
@@ -23,13 +59,13 @@ import { AIModelsOption } from '@/services/Shared'
           <div className='flex justify-between items-end px-2'>
             <Tabs defaultValue="search" className="w-[400px]">
             <TabsContent value="search">
-                <input type="text" placeholder='Ask anything' className='w-full p-4 outline-none' />
+                <input type="text" placeholder='Ask anything' className='w-full p-4 outline-none' onChange={(e)=>setUserSearchInput(e.target.value)} />
               </TabsContent>
               <TabsContent value="research">
-                <input type="text" placeholder='Research anything' className='w-full p-4 outline-none' />
+                <input type="text" placeholder='Research anything' className='w-full p-4 outline-none' onChange={(e)=>setUserSearchInput(e.target.value)} />
               </TabsContent>
               <TabsList>
-                <TabsTrigger value="search"><Search /> Search</TabsTrigger>
+                <TabsTrigger value="search" onClick={()=>setSearchType("search")} ><Search /> Search</TabsTrigger>
                 <TabsTrigger value="research"><Command /> Research</TabsTrigger>
               </TabsList>
 
@@ -59,7 +95,12 @@ import { AIModelsOption } from '@/services/Shared'
               <Button variant="ghost"><Globe /></Button>
               <Button variant="ghost"><Paperclip /></Button>
               <Button variant="ghost"><Mic /></Button>
-              <Button className="bg-yellow-500 w-8 h-8"><AudioLines /></Button>
+              <Button className="bg-yellow-500 w-8 h-8" onClick={()=>(
+                userSearchInput?onSearchQuery():null
+              )}>
+                {!userSearchInput?<AudioLines />:<ArrowRight disabled={loading} />}
+                
+              </Button>
             </div>
           </div>
         </div>
