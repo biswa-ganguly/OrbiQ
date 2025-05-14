@@ -3,6 +3,8 @@ import "./globals.css";
 import AppSidebar from "./_components/AppSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ClerkProvider } from "@clerk/nextjs";
+import Provider from "./Provider";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,7 +21,7 @@ export const metadata = {
   description: "Created by GANGULY",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout( {children} ) {
   return (
     <ClerkProvider>
     <html lang="en">
@@ -27,10 +29,12 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} font-mono ${geistMono.variable} antialiased`}
       >
         <SidebarProvider>
-          <AppSidebar />
-          <SidebarTrigger />
-        {children}
-        </SidebarProvider>
+            <AppSidebar />
+            <SidebarTrigger />
+            <Provider>
+              {children}
+            </Provider>
+          </SidebarProvider>
       </body>
     </html>
     </ClerkProvider>
