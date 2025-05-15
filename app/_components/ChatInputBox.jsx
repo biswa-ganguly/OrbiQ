@@ -50,7 +50,7 @@ setLoading(true)
     router.push("/search/"+libId)
 
 
-    console.log("Inserted data:", data);
+ 
 setLoading(false)
 };
 
