@@ -1,48 +1,44 @@
 import {
-    LucideImage,
-    LucideList,
-    LucideSparkles,
-    LucideVideo,
-  } from "lucide-react";
-  import React, { useEffect, useState } from "react";
-  import AnswerDisplay from "./AnswerDisplay";
-  import axios from "axios";
-  import { SEARCH_RESULT } from "@/services/Shared";
-  import { useParams } from "next/navigation";
-  import { supabase } from "@/services/Superbase";
-  
-  const tabs = [
-    { label: "Answer", icon: LucideSparkles },
-    { label: "Images", icon: LucideImage },
-    { label: "Videos", icon: LucideVideo },
-    { label: "Sources", icon: LucideList, badge: 10 },
-  ];
-  
-  function DispalyResult({ searchInputRecord }) {
-    const [activeTab, setActiveTab] = useState("Answer");
-    const [searchResult, setSearchResult] = useState(SEARCH_RESULT);
-    const [lastSearch, setLastSearch] = useState(""); // ✅ track last searched input
-    const { libId } = useParams();
-  
-    useEffect(() => {
-      if (
-        searchInputRecord?.searchInput &&
-        searchInputRecord.searchInput !== lastSearch
-      ) {
-        GetSearchApiResult();
-        setLastSearch(searchInputRecord.searchInput);
-      }
-    }, [searchInputRecord]);
-  
-    const GetSearchApiResult = async () => {
-      // const result = await axios.post("/api/brave-search-api", {
-      //   searchInput: searchInputRecord?.searchInput,
-      //   searchType: searchInputRecord?.type,
-      // });
-      // console.log(result.data);
-  
-      const searchResp = SEARCH_RESULT;
-  
+  LucideImage,
+  LucideList,
+  LucideSparkles,
+  LucideVideo,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import AnswerDisplay from "./AnswerDisplay";
+import axios from "axios";
+import { useParams } from "next/navigation";
+import { supabase } from "@/services/Superbase";
+import ImagesTab from "./ImagesTab";
+
+const tabs = [
+  { label: "Answer", icon: LucideSparkles },
+  { label: "Images", icon: LucideImage },
+  { label: "Videos", icon: LucideVideo },
+  { label: "Sources", icon: LucideList, badge: 10 },
+];
+
+function DispalyResult({ searchInputRecord }) {
+  const [activeTab, setActiveTab] = useState("Answer");
+  const [searchResult, setSearchResult] = useState(null); // 🔧 initialized properly
+  const { libId } = useParams();
+
+  useEffect(() => {
+    if (searchInputRecord?.Chats.length === 0) {
+      GetSearchApiResult();
+    }
+  }, [searchInputRecord]);
+
+  const GetSearchApiResult = async () => {
+    try {
+      const result = await axios.post("/api/brave-search-api", {
+        searchInput: searchInputRecord?.searchInput,
+        searchType: searchInputRecord?.type,
+      });
+
+      const searchResp = result.data;
+      setSearchResult(searchResp);
+
       const formatedSearchResp = searchResp?.web?.results?.map((item) => ({
         title: item?.title,
         description: item?.description,
@@ -51,49 +47,71 @@ import {
         url: item?.url,
         thumbnail: item?.thumbnail?.src,
       }));
-  
-      console.log(formatedSearchResp);
-  
+
+      console.log("Formatted search result:", formatedSearchResp);
+
       const { data, error } = await supabase
         .from("Chats")
         .insert([
           {
             libId: libId,
             searchResult: formatedSearchResp,
+            userSearchInput: searchInputRecord?.searchInput,
           },
         ])
         .select();
-      console.log(data.id);
-      await GenerateAiResponse(formatedSearchResp, data[0].id)
-    };
 
-    const GenerateAiResponse = async (formatedSearchResp,recordId)=>{
-      const result=await axios.post("/api/llm-model",{
-        searchInput: searchInputRecord?.searchInput,
-        searchResult:formatedSearchResp,
-        recordId: recordId
-      })
-      console.log(result.data)
-      const runId= result.data
+      if (error) {
+        console.error("Supabase insert error:", error);
+        return;
+      }
 
-
-      const interval = setInterval(async ()=>{
-        const runResp =await axios.post("/api/get-inngest-status", {
-          runId:runId
-        })
-        if(runResp?.data?.data[0]?.status =="Completed" ){
-          console.log("completed!!")
-          clearInterval(interval)
-        }
-      },1000)
+      if (data?.[0]?.id) {
+        await GenerateAiResponse(formatedSearchResp, data[0].id);
+      }
+    } catch (err) {
+      console.error("Error in GetSearchApiResult:", err);
     }
-  
-    return (
-      <div>
-        <div className="mt-7">
-          <h2 className="font-medium text-3xl line-clamp-2 ">
-            {searchInputRecord?.searchInput}{" "}
+  };
+
+  const GenerateAiResponse = async (formatedSearchResp, recordId) => {
+    try {
+      const result = await axios.post("/api/llm-model", {
+        searchInput: searchInputRecord?.searchInput,
+        searchResult: formatedSearchResp,
+        recordId: recordId,
+      });
+
+      const runId = result.data;
+
+      const interval = setInterval(async () => {
+        try {
+          const runResp = await axios.post("/api/get-inngest-status", {
+            runId: runId,
+          });
+
+          if (runResp?.data?.data?.[0]?.status === "Completed") {
+            console.log("AI Response completed ✅");
+            clearInterval(interval);
+            // Optionally refetch updated Chats here
+          }
+        } catch (err) {
+          console.error("Error checking Inngest status:", err);
+        }
+      }, 1000);
+    } catch (err) {
+      console.error("Error in GenerateAiResponse:", err);
+    }
+  };
+
+  return (
+    <div>
+      {searchInputRecord?.Chats?.map((chat, index) => (
+        <div className="mt-7" key={index}>
+          <h2 className="font-medium text-3xl line-clamp-2">
+            {chat?.userSearchInput}
           </h2>
+
           <div className="flex items-center space-x-6 border-b border-gray-200 pb-2 mt-6">
             {tabs.map(({ label, icon: Icon, badge }) => (
               <button
@@ -115,21 +133,21 @@ import {
                 )}
               </button>
             ))}
-  
+
             <div className="ml-auto text-sm text-gray-500">
               1 task <span className="ml-1">↗</span>
             </div>
           </div>
-  
-          <div>
-            {activeTab == "Answer" ? (
-              <AnswerDisplay searchResult={searchResult} />
-            ) : null}
+
+          <div className="mt-4">
+            {activeTab === "Answer" && <AnswerDisplay chat={chat} />}
+            {activeTab === "Images" && <ImagesTab chat={chat} />}
+            {/* Future: you can conditionally render images/videos/sources here */}
           </div>
         </div>
-      </div>
-    );
-  }
-  
-  export default DispalyResult;
-  
+      ))}
+    </div>
+  );
+}
+
+export default DispalyResult;

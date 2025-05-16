@@ -1,25 +1,36 @@
-import axios from "axios"
-import { error } from "console"
-import { NextResponse } from "next/server"
+import axios from "axios";
+import { NextResponse } from "next/server";
 
-export async function POST(req){
-  const {searchInput,searchType} = await req.json()
+export async function POST(req) {
+  try {
+    const { searchInput, searchType } = await req.json();
 
-  if(searchInput){
-
-  
-  const result =await axios.get("https://api.search.brave.com/res/v1/web/search?q="+ searchInput + "&count=5",{
-    headers:{
-      "Accept":"application/json",
-      "Accept-Encoding":"gzip",
-      "X-Subscription-Token":process.env.BRAVE_API_KEY
+    if (!searchInput) {
+      return NextResponse.json(
+        { error: "Please pass a search query" },
+        { status: 400 }
+      );
     }
-  })
 
-  console.log(result.data)
-  return NextResponse.json(result.data)
-}
-else{
-  return NextResponse.json({error:"Please Pass search query"})
-}
+    const encodedQuery = encodeURIComponent(searchInput);
+
+    const result = await axios.get(
+      `https://api.search.brave.com/res/v1/web/search?q=${encodedQuery}&count=5`,
+      {
+        headers: {
+          Accept: "application/json",
+          "Accept-Encoding": "gzip",
+          "X-Subscription-Token": process.env.BRAVE_API_KEY,
+        },
+      }
+    );
+
+    return NextResponse.json(result.data);
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch search results" },
+      { status: 500 }
+    );
+  }
 }

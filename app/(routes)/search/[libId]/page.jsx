@@ -13,15 +13,16 @@ function SearchQueryResult() {
 
     useEffect(()=>{
         GetSearchQueryResult()
-    })
+    }, [libId])
 
     const GetSearchQueryResult =async ()=>{
 
 let { data: library, error } = await supabase
 .from('library')
-.select('*')
+.select('*,Chats(*)')
 .eq("libId", libId)
 
+console.log(library[0])
 setSearchInputRecord(library[0])
         
     }

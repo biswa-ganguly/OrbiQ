@@ -1,24 +1,17 @@
-import Image from 'next/image'
-import React from 'react'
+import Image from 'next/image';
+import React from 'react';
+import SourceList from './SourceList';
+import DisplaySummery from './DisplaySummery';
 
-function AnswerDisplay({searchResult}) {
-
-    const webResult = searchResult?.web?.results
+function AnswerDisplay({ chat }) {
+  
   return (
-    <div>
-        <div>
-            {webResult.map((item,index)=>{
-                <div key={index} className='flex items-center gap-2'>
-                    <div>
-                        <Image src={item?.profile?.img} alt={item?.profile?.name} width={20} height={20} />
-                        <h2 className='text-xs' >{item?.profile?.long_name }</h2>
-
-                    </div>
-                </div>
-            })}
-        </div>
+    <div className="space-y-4 mt-4">
+      <SourceList webResult={chat?.searchResult} />
+      <hr className='border-r-yellow-600  h-1'/>
+      <DisplaySummery aiResp={chat?.aiResp} />
     </div>
-  )
+  );
 }
 
-export default AnswerDisplay
+export default AnswerDisplay;
