@@ -45,8 +45,8 @@ function AppSidebar() {
     const {user} = useUser()
   return (
     <Sidebar>
-      <SidebarHeader className="bg-yellow-200 items-center " >
-        <Image src={"/logo.png"} alt='logo' width={200} height={100} />
+      <SidebarHeader className="bg-blue-200 items-center " >
+        <Image src={"/logo.png"} alt='logo' width={400} height={50} />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup >
