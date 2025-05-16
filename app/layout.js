@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Perplexity",
+  title: "OrbiQ",
   description: "Created by GANGULY",
 };
 
