@@ -74,6 +74,18 @@ import {
         recordId: recordId
       })
       console.log(result.data)
+      const runId= result.data
+
+
+      const interval = setInterval(async ()=>{
+        const runResp =await axios.post("/api/get-inngest-status", {
+          runId:runId
+        })
+        if(runResp?.data?.data[0]?.status =="Completed" ){
+          console.log("completed!!")
+          clearInterval(interval)
+        }
+      },1000)
     }
   
     return (
