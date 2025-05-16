@@ -51,10 +51,30 @@ function ChatInputBox() {
         <div className='flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 px-2'>
           <Tabs defaultValue="search" className="w-full sm:w-[400px]">
             <TabsContent value="search">
-              <input type="text" placeholder='Ask anything' className='w-full p-4 outline-none' onChange={(e) => setUserSearchInput(e.target.value)} />
+              <input
+                type="text"
+                placeholder='Ask anything'
+                className='w-full p-4 outline-none'
+                onChange={(e) => setUserSearchInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && userSearchInput) {
+                    onSearchQuery();
+                  }
+                }}
+              />
             </TabsContent>
             <TabsContent value="research">
-              <input type="text" placeholder='Research anything' className='w-full p-4 outline-none' onChange={(e) => setUserSearchInput(e.target.value)} />
+              <input
+                type="text"
+                placeholder='Research anything'
+                className='w-full p-4 outline-none'
+                onChange={(e) => setUserSearchInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && userSearchInput) {
+                    onSearchQuery();
+                  }
+                }}
+              />
             </TabsContent>
             <TabsList className="w-full sm:w-auto flex">
               <TabsTrigger value="search" onClick={() => setSearchType("search")} className="flex-1 sm:flex-none"><Search className='mr-2' /> Search</TabsTrigger>
