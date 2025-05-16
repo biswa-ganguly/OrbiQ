@@ -30,7 +30,7 @@ setSearchInputRecord(library[0])
   return (
     <div>
         <Header searchInputRecord={searchInputRecord}/>
-        <div className='lg:px-12'>
+        <div className='lg:px-32 px-10'>
         <DispalyResult searchInputRecord={searchInputRecord} />
         </div>
     </div>
