@@ -5,6 +5,22 @@ import moment from 'moment'
 import React from 'react'
 
 function Header({ searchInputRecord }) {
+  const handleShare = () => {
+    const shareData = {
+      title: 'Check out this query',
+      text: searchInputRecord?.searchInput || 'Query shared from our app!',
+      url: typeof window !== 'undefined' ? window.location.href : '',
+    }
+
+    if (navigator.share) {
+      navigator.share(shareData)
+        .then(() => console.log('Shared successfully'))
+        .catch((error) => console.error('Share failed:', error));
+    } else {
+      alert('Sharing is not supported in your browser.');
+    }
+  }
+
   return (
     <div className='p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b'>
       {/* Left Section */}
@@ -23,9 +39,12 @@ function Header({ searchInputRecord }) {
 
       {/* Right Section - Buttons (Hidden on smaller screens) */}
       <div className='hidden sm:flex items-center gap-3'>
-        <Button className="bg-yellow-500" size="icon"><Bookmark /></Button>
-        <Button className="bg-yellow-500" size="icon"><Link /></Button>
-        <Button className="bg-yellow-500 flex items-center gap-1 px-3"><Share /> <span className='hidden md:inline'>Share</span></Button>
+        <Button
+          className="bg-yellow-500 flex items-center gap-1 px-3"
+          onClick={handleShare}
+        >
+          <Share /> <span className='hidden md:inline'>Share</span>
+        </Button>
       </div>
     </div>
   )
