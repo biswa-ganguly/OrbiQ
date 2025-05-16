@@ -28,7 +28,7 @@ setSearchInputRecord(library[0])
     }
 
   return (
-    <div>
+    <div className='overflow-hidden '>
         <Header searchInputRecord={searchInputRecord}/>
         <div className='lg:px-32 px-10'>
         <DispalyResult searchInputRecord={searchInputRecord} />

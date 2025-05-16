@@ -14,7 +14,7 @@ function ImagesTab({chat}) {
             className="block rounded overflow-hidden shadow hover:shadow-lg transition"
           >
             <Image
-              src={item.thumbnail}
+              src={item.thumbnail||item?.img}
               alt={item.title || "Image"}
               width={200}
               height={100}

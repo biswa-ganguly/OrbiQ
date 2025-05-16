@@ -246,7 +246,7 @@ function DispalyResult({ searchInputRecord }) {
               </button>
             ))}
 
-            <div className="ml-auto text-sm text-gray-500">
+            <div className="ml-auto hidden lg:block text-sm text-gray-500">
               1 task <span className="ml-1">↗</span>
             </div>
           </div>
