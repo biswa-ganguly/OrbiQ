@@ -63,8 +63,18 @@ import {
           },
         ])
         .select();
-      console.log(data);
+      console.log(data.id);
+      await GenerateAiResponse(formatedSearchResp, data[0].id)
     };
+
+    const GenerateAiResponse = async (formatedSearchResp,recordId)=>{
+      const result=await axios.post("/api/llm-model",{
+        searchInput: searchInputRecord?.searchInput,
+        searchResult:formatedSearchResp,
+        recordId: recordId
+      })
+      console.log(result.data)
+    }
   
     return (
       <div>
