@@ -15,7 +15,7 @@ export async function POST(req) {
     const encodedQuery = encodeURIComponent(searchInput);
 
     const result = await axios.get(
-      `https://api.search.brave.com/res/v1/web/search?q=${encodedQuery}&count=5`,
+      `https://api.search.brave.com/res/v1/web/search?q=${encodedQuery}`,
       {
         headers: {
           Accept: "application/json",
