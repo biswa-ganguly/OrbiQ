@@ -10,12 +10,12 @@ import axios from "axios";
 import { useParams } from "next/navigation";
 import { supabase } from "@/services/Superbase";
 import ImagesTab from "./ImagesTab";
+import SourcesTab from "./SourcesTab";
 
 const tabs = [
   { label: "Answer", icon: LucideSparkles },
   { label: "Images", icon: LucideImage },
-  { label: "Videos", icon: LucideVideo },
-  { label: "Sources", icon: LucideList, badge: 10 },
+  { label: "Sources", icon: LucideList  },
 ];
 
 function DispalyResult({ searchInputRecord }) {
@@ -24,9 +24,7 @@ function DispalyResult({ searchInputRecord }) {
   const { libId } = useParams();
 
   useEffect(() => {
-    if (searchInputRecord?.Chats.length === 0) {
-      GetSearchApiResult();
-    }
+   searchInputRecord?.Chats.length === 0 ? GetSearchApiResult():GetSearchRecords();
   }, [searchInputRecord]);
 
   const GetSearchApiResult = async () => {
@@ -60,7 +58,7 @@ function DispalyResult({ searchInputRecord }) {
           },
         ])
         .select();
-
+        await GetSearchRecords()
       if (error) {
         console.error("Supabase insert error:", error);
         return;
@@ -99,10 +97,20 @@ function DispalyResult({ searchInputRecord }) {
           console.error("Error checking Inngest status:", err);
         }
       }, 1000);
+      await GetSearchRecords()
     } catch (err) {
       console.error("Error in GenerateAiResponse:", err);
     }
   };
+
+  const GetSearchRecords =async()=>{
+    let { data: library, error } = await supabase
+.from('library')
+.select('*,Chats(*)')
+.eq("libId", libId)
+
+setSearchResult(library[0])
+  }
 
   return (
     <div>
@@ -142,6 +150,7 @@ function DispalyResult({ searchInputRecord }) {
           <div className="mt-4">
             {activeTab === "Answer" && <AnswerDisplay chat={chat} />}
             {activeTab === "Images" && <ImagesTab chat={chat} />}
+            {activeTab === "Sources" && <SourcesTab  chat={chat} />}
             {/* Future: you can conditionally render images/videos/sources here */}
           </div>
         </div>
