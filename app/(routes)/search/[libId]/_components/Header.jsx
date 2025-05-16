@@ -18,7 +18,7 @@ function Header({ searchInputRecord }) {
 
       {/* Middle Section - Query Text */}
       <h2 className='text-lg sm:text-xl line-clamp-1 sm:max-w-md text-gray-700 text-center sm:text-left px-2'>
-        {searchInputRecord?.searchInput}
+        {searchInputRecord?.searchInput?.toUpperCase()}
       </h2>
 
       {/* Right Section - Buttons (Hidden on smaller screens) */}

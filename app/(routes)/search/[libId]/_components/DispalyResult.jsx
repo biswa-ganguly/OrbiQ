@@ -222,7 +222,10 @@ function DispalyResult({ searchInputRecord }) {
 
       {searchInputRecord?.Chats?.map((chat, index) => (
         <div className="mt-7" key={index} ref={index === searchInputRecord.Chats.length - 1 ? latestChatRef : null}>
-          <h2 className="font-medium text-3xl line-clamp-2">{chat?.userSearchInput}</h2>
+          <h2 className="font-medium text-3xl line-clamp-2">
+              {chat?.userSearchInput?.toUpperCase()}
+          </h2>
+
 
           <div className="flex items-center space-x-6 border-b border-gray-200 pb-2 mt-6">
             {tabs.map(({ label, icon: Icon, badge }) => (
